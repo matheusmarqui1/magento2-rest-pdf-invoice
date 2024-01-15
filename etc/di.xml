@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Ytec\RestPdfInvoice\Api\PdfInvoiceManagementInterface" type="Ytec\RestPdfInvoice\Model\PdfInvoiceManagement"/>
+    <type name="Magento\Framework\Webapi\Rest\Response\RendererFactory">
+        <arguments>
+            <argument name="renders" xsi:type="array">
+                <item name="application_pdf" xsi:type="array">
+                    <item name="type" xsi:type="string">application/pdf</item>
+                    <item name="model" xsi:type="string">Ytec\RestPdfInvoice\Model\Response\Renderer\PdfRenderer</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>
