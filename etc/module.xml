@@ -4,6 +4,7 @@
         <sequence>
             <module name="Magento_Sales"/>
             <module name="Magento_Framework"/>
+            <module name="Ytec_Base"/>
         </sequence>
     </module>
 </config>

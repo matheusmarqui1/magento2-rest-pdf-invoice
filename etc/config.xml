@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/config.xsd">
+    <default>
+        <ytec_rest_pdf_invoice>
+            <general>
+                <enable>1</enable>
+            </general>
+        </ytec_rest_pdf_invoice>
+    </default>
+</config>

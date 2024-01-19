@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <!-- Submenu Item for Ytec Rest Pdf Invoice Configuration -->
+        <add id="Ytec_RestPdfInvoice::ytec_rest_pdf_invoice" title="REST PDF Invoice" module="Ytec_RestPdfInvoice"
+             sortOrder="20" parent="Ytec_Base::ytec_menu"
+             action="adminhtml/system_config/edit/section/ytec_rest_pdf_invoice"
+             resource="Ytec_PdfInvoice::pdf_invoice"/>
+    </menu>
+</config>

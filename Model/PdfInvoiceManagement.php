@@ -5,9 +5,11 @@ namespace Ytec\RestPdfInvoice\Model;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Webapi\Exception as WebApiException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Ytec\RestPdfInvoice\Api\PdfInvoiceManagementInterface;
+use Ytec\RestPdfInvoice\Helper\Config as ModuleConfig;
 use Ytec\RestPdfInvoice\Service\RestInvoicePdfGeneratorService;
 use Ytec\RestPdfInvoice\Service\RestPdfFileService;
 
@@ -22,23 +24,32 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
      */
     private RestInvoicePdfGeneratorService $pdfGeneratorService;
     /**
+     * @var ModuleConfig
+     */
+    private ModuleConfig $moduleConfig;
+    /**
      * @var RestPdfFileService
      */
     private RestPdfFileService $restPdfFileService;
 
     /**
+     * Constructor.
+     *
      * @param RestInvoicePdfGeneratorService $pdfGeneratorService
      * @param RestPdfFileService $restPdfFileService
      * @param OrderRepositoryInterface $orderRepository
+     * @param ModuleConfig $moduleConfig
      */
     public function __construct(
         RestInvoicePdfGeneratorService $pdfGeneratorService,
         RestPdfFileService $restPdfFileService,
         OrderRepositoryInterface $orderRepository,
+        ModuleConfig $moduleConfig
     ) {
         $this->orderRepository = $orderRepository;
         $this->pdfGeneratorService = $pdfGeneratorService;
         $this->restPdfFileService = $restPdfFileService;
+        $this->moduleConfig = $moduleConfig;
     }
 
     /**
@@ -50,6 +61,10 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
      */
     public function getByOrderId(int $orderId): ResponseInterface
     {
+        if ($this->moduleConfig->isDisabled()) {
+            throw new WebApiException(__('The functionality is currently disabled.'));
+        }
+
         $order = $this->loadOrder($orderId);
         $invoices = $order->getInvoiceCollection();
 
