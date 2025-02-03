@@ -1,12 +1,23 @@
 <?php
+/**
+ * Copyright (c) 2025 Ytec.
+ *
+ * @package    Ytec
+ * @moduleName RestPdfInvoice
+ * @author     Matheus Marqui <matheus.701@live.com>
+ */
+declare(strict_types=1);
 
-namespace Ytec\RestPdfInvoice\Helper;
+namespace Ytec\RestPdfInvoice\Util;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Utility class for module configurations.
+ */
 class Config
 {
     /**
@@ -14,7 +25,14 @@ class Config
     */
     public const XML_PATH_ENABLED = 'ytec_rest_pdf_invoice/general/enable';
 
+    /**
+     * @var ScopeConfigInterface
+     */
     private ScopeConfigInterface $scopeConfig;
+
+    /**
+     * @var StoreManagerInterface
+     */
     private StoreManagerInterface $storeManager;
 
     /**

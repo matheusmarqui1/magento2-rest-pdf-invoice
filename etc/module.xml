@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2025 Ytec.
+ *
+ * @package    Ytec
+ * @moduleName RestPdfInvoice
+ * @author     Matheus Marqui <matheus.701@live.com>
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Ytec_RestPdfInvoice" setup_version="1.0.0">
+    <module name="Ytec_RestPdfInvoice">
         <sequence>
             <module name="Magento_Sales"/>
             <module name="Magento_Framework"/>

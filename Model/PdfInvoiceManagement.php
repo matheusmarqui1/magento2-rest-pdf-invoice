@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2025 Ytec.
+ *
+ * @package    Ytec
+ * @moduleName RestPdfInvoice
+ * @author     Matheus Marqui <matheus.701@live.com>
+ */
+declare(strict_types=1);
 
 namespace Ytec\RestPdfInvoice\Model;
 
@@ -9,47 +17,52 @@ use Magento\Framework\Webapi\Exception as WebApiException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Ytec\RestPdfInvoice\Api\PdfInvoiceManagementInterface;
-use Ytec\RestPdfInvoice\Helper\Config as ModuleConfig;
+use Ytec\RestPdfInvoice\Util\Config as ModuleConfig;
 use Ytec\RestPdfInvoice\Service\RestInvoicePdfGeneratorService;
-use Ytec\RestPdfInvoice\Service\RestPdfFileService;
 
+/**
+ * Class to manage the PDF invoice generation and response.
+ */
 class PdfInvoiceManagement implements PdfInvoiceManagementInterface
 {
     /**
      * @var OrderRepositoryInterface
      */
     private OrderRepositoryInterface $orderRepository;
+
     /**
      * @var RestInvoicePdfGeneratorService
      */
     private RestInvoicePdfGeneratorService $pdfGeneratorService;
+
     /**
      * @var ModuleConfig
      */
     private ModuleConfig $moduleConfig;
+
     /**
-     * @var RestPdfFileService
+     * @var ResponseInterface
      */
-    private RestPdfFileService $restPdfFileService;
+    private ResponseInterface $responseInterface;
 
     /**
      * Constructor.
      *
      * @param RestInvoicePdfGeneratorService $pdfGeneratorService
-     * @param RestPdfFileService $restPdfFileService
      * @param OrderRepositoryInterface $orderRepository
      * @param ModuleConfig $moduleConfig
+     * @param ResponseInterface $responseInterface
      */
     public function __construct(
         RestInvoicePdfGeneratorService $pdfGeneratorService,
-        RestPdfFileService $restPdfFileService,
         OrderRepositoryInterface $orderRepository,
-        ModuleConfig $moduleConfig
+        ModuleConfig $moduleConfig,
+        ResponseInterface $responseInterface
     ) {
         $this->orderRepository = $orderRepository;
         $this->pdfGeneratorService = $pdfGeneratorService;
-        $this->restPdfFileService = $restPdfFileService;
         $this->moduleConfig = $moduleConfig;
+        $this->responseInterface = $responseInterface;
     }
 
     /**
@@ -74,7 +87,15 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
 
         $pdfContent = $this->pdfGeneratorService->generate($invoices)->render();
 
-        return $this->restPdfFileService->getResponse($pdfContent);
+        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+        $this->responseInterface
+            ->setHeader('Content-Type', 'application/pdf', true)
+            ->setHeader('Content-Disposition', 'attachment; filename="invoice.pdf"', true)
+            ->setHeader('Content-Length', strlen($pdfContent), true)
+            ->setBody($pdfContent)
+        ->sendResponse();
+
+        return $this->responseInterface;
     }
 
     /**

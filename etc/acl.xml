@@ -1,9 +1,20 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2025 Ytec.
+ *
+ * @package    Ytec
+ * @moduleName RestPdfInvoice
+ * @author     Matheus Marqui <matheus.701@live.com>
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Ytec_PdfInvoice::pdf_invoice" title="Get PDF invoices" />
+                <resource id="Magento_Sales::sales">
+                    <resource id="Ytec_PdfInvoice::pdf_invoice" title="Get PDF Invoices (rest)" translate="title" sortOrder="1000" />
+                </resource>
             </resource>
         </resources>
     </acl>

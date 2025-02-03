@@ -1,4 +1,13 @@
 <?xml version="1.0" ?>
+<!--
+/**
+ * Copyright (c) 2025 Ytec.
+ *
+ * @package    Ytec
+ * @moduleName RestPdfInvoice
+ * @author     Matheus Marqui <matheus.701@live.com>
+ */
+-->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
     <route method="GET" url="/V1/orders/:orderId/pdf-invoice">
         <service class="Ytec\RestPdfInvoice\Api\PdfInvoiceManagementInterface" method="getByOrderId"/>
