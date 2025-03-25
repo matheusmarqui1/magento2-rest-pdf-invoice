@@ -38,7 +38,7 @@ Introducing Ytec Rest Pdf Invoice for Magento 2: a streamlined module that simpl
 
 ### Retrieving a PDF Invoice for an Order
 
-Send a GET request to `/rest/V1/orders/:orderId/pdf-invoice` with appropriate authorization. Replace `:orderId` with the actual order ID.
+Send a GET request to `/rest/V1/orders/:orderId/pdf-invoice` with appropriate authorization. Replace `:orderId` with the actual order ID (entity_id or increment_id are supported).
 
 ### Retrieving a PDF Invoice for an Invoice
 
