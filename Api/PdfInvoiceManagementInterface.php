@@ -10,13 +10,15 @@ declare(strict_types=1);
 
 namespace Ytec\RestPdfInvoice\Api;
 
+use Magento\Framework\App\ResponseInterface;
+
 interface PdfInvoiceManagementInterface
 {
     /**
      * Get the PDF invoice by order ID.
      *
-     * @param int $orderId
-     * @return \Magento\Framework\App\ResponseInterface
+     * @param string $orderId Order's ID (Entity ID or Increment ID).
+     * @return ResponseInterface
      */
-    public function getByOrderId(int $orderId): \Magento\Framework\App\ResponseInterface;
+    public function getByOrderId(string $orderId): \Magento\Framework\App\ResponseInterface;
 }

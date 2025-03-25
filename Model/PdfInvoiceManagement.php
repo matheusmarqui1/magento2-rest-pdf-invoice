@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Ytec\RestPdfInvoice\Model;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -46,23 +47,31 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
     private ResponseInterface $responseInterface;
 
     /**
-     * Constructor.
+     * @var SearchCriteriaBuilder
+     */
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
+
+    /**
+     * PdfInvoiceManagement constructor.
      *
      * @param RestInvoicePdfGeneratorService $pdfGeneratorService
      * @param OrderRepositoryInterface $orderRepository
      * @param ModuleConfig $moduleConfig
      * @param ResponseInterface $responseInterface
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         RestInvoicePdfGeneratorService $pdfGeneratorService,
         OrderRepositoryInterface $orderRepository,
         ModuleConfig $moduleConfig,
-        ResponseInterface $responseInterface
+        ResponseInterface $responseInterface,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->orderRepository = $orderRepository;
         $this->pdfGeneratorService = $pdfGeneratorService;
         $this->moduleConfig = $moduleConfig;
         $this->responseInterface = $responseInterface;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -72,7 +81,7 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
      * @throws NoSuchEntityException|\Zend_Pdf_Exception
      * @throws \Exception
      */
-    public function getByOrderId(int $orderId): ResponseInterface
+    public function getByOrderId(string $orderId): ResponseInterface
     {
         if ($this->moduleConfig->isDisabled()) {
             throw new WebApiException(__('The functionality is currently disabled.'));
@@ -101,12 +110,12 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
     /**
      * Loads the order based on the orderId given in the request.
      *
-     * @param int $orderId
+     * @param string $orderId
      * @return OrderInterface
      * @throws InputException
      * @throws NoSuchEntityException
      */
-    private function loadOrder(int $orderId): OrderInterface
+    private function loadOrder(string $orderId): OrderInterface
     {
         if (!$orderId) {
             throw InputException::requiredField('orderId');
@@ -115,7 +124,30 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
         try {
             return $this->orderRepository->get($orderId);
         } catch (NoSuchEntityException $ex) {
-            throw new NoSuchEntityException(__('No order found with ID "%1".', $orderId));
+            $order = $this->loadOrderByIncrementId($orderId);
+
+            if (null === $order) {
+                throw new NoSuchEntityException(__('No order found with ID "%1".', $orderId));
+            }
+
+            return $order;
         }
+    }
+
+    /**
+     * Loads the order based on the incrementId given in the request.
+     *
+     * @param string $incrementId
+     * @return OrderInterface|null
+     */
+    private function loadOrderByIncrementId(string $incrementId): ?OrderInterface
+    {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(OrderInterface::INCREMENT_ID, $incrementId)
+        ->create();
+
+        $orders = $this->orderRepository->getList($searchCriteria)->getItems();
+
+        return reset($orders) ?: null;
     }
 }
