@@ -13,6 +13,7 @@
         <ytec_rest_pdf_invoice>
             <general>
                 <enable>1</enable>
+                <reduce_pdf_size_enabled>1</reduce_pdf_size_enabled>
             </general>
         </ytec_rest_pdf_invoice>
     </default>
