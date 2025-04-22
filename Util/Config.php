@@ -26,6 +26,11 @@ class Config
     public const XML_PATH_ENABLED = 'ytec_rest_pdf_invoice/general/enable';
 
     /**
+     * XML path for the PDF size reduction setting.
+     */
+    public const XML_PATH_PDF_SIZE_REDUCTION_ENABLED = 'ytec_rest_pdf_invoice/general/reduce_pdf_size_enabled';
+
+    /**
      * @var ScopeConfigInterface
      */
     private ScopeConfigInterface $scopeConfig;
@@ -48,7 +53,7 @@ class Config
     }
 
     /**
-     * Checks if the Rest Pdf Invoice functionality is enabled.
+     * Checks if the Rest PDF Invoice functionality is enabled.
      *
      * @return bool
      * @throws NoSuchEntityException
@@ -56,7 +61,7 @@ class Config
     public function isEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(
-            self::XML_PATH_ENABLED,
+            static::XML_PATH_ENABLED,
             ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
@@ -71,5 +76,25 @@ class Config
     public function isDisabled(): bool
     {
         return !$this->isEnabled();
+    }
+
+    /**
+     * Checks if the PDF size reduction is enabled.
+     *
+     * @return bool
+     */
+    public function isPdfSizeReductionEnabled(): bool
+    {
+        try {
+            $scopeCode = $this->storeManager->getStore()->getId();
+        } catch (NoSuchEntityException $exception) {
+            $scopeCode = null;
+        }
+
+        return $this->scopeConfig->isSetFlag(
+            static::XML_PATH_PDF_SIZE_REDUCTION_ENABLED,
+            ScopeInterface::SCOPE_STORE,
+            $scopeCode
+        );
     }
 }

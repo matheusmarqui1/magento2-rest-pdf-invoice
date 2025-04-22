@@ -21,6 +21,17 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Enable or disable the Rest Pdf Invoice functionality.</comment>
                 </field>
+                <field id="reduce_pdf_size_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Reduce PDF Size</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                            Enable or disable the reduction of PDF invoice sizes.
+                            <br>
+                            <strong>Note:</strong> This feature will replace the original font of the PDF invoice with a ligher one.
+                        ]]>
+                    </comment>
+                </field>
             </group>
         </section>
     </system>
