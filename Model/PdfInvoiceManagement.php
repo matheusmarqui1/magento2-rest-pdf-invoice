@@ -102,7 +102,7 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
             ->setHeader('Content-Disposition', 'attachment; filename="invoice.pdf"', true)
             ->setHeader('Content-Length', strlen($pdfContent), true)
             ->setBody($pdfContent)
-        ->sendResponse();
+            ->sendResponse();
 
         return $this->responseInterface;
     }
@@ -119,6 +119,10 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
     {
         if (!$orderId) {
             throw InputException::requiredField('orderId');
+        }
+
+        if ($this->isIncrementId($orderId)) {
+            return $this->loadOrderByIncrementId($orderId);
         }
 
         try {
@@ -144,10 +148,28 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
     {
         $searchCriteria = $this->searchCriteriaBuilder
             ->addFilter(OrderInterface::INCREMENT_ID, $incrementId)
-        ->create();
+            ->create();
 
         $orders = $this->orderRepository->getList($searchCriteria)->getItems();
 
         return reset($orders) ?: null;
+    }
+
+    /**
+     * Determines whether a given identifier is an entity or increment ID.
+     *
+     * This is done to void mismatches between order IDs and increment IDs
+     * that could start with a 0.
+     *
+     * @param string $identifier
+     * @return bool
+     */
+    private function isIncrementId(string $identifier): bool
+    {
+        if (!ctype_digit($identifier)) {
+            return true;
+        }
+
+        return (string)(int)$identifier !== $identifier;
     }
 }
