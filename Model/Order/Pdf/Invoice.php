@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Ytec\RestPdfInvoice\Model\Order\Pdf;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Stdlib\StringUtils;
@@ -33,9 +35,20 @@ use Ytec\RestPdfInvoice\Util\Config as ModuleConfig;
 class Invoice extends BaseMagentoInvoice
 {
     /**
+     * Whether to enable PDF size reduction.
+     * @var bool
+     */
+    private bool $isPdfSizeReductionEnabled = false;
+
+    /**
      * @var ModuleConfig
      */
     private ModuleConfig $moduleConfig;
+
+    /**
+     * @var State
+     */
+    private State $appState;
 
     /**
      * Invoice constructor.
@@ -53,7 +66,9 @@ class Invoice extends BaseMagentoInvoice
      * @param StoreManagerInterface $storeManager
      * @param Emulation $appEmulation
      * @param ModuleConfig $moduleConfig
+     * @param State $appState
      * @param array $data
+     * @throws LocalizedException
      */
     public function __construct(
         Data                  $paymentData,
@@ -69,6 +84,7 @@ class Invoice extends BaseMagentoInvoice
         StoreManagerInterface $storeManager,
         Emulation             $appEmulation,
         ModuleConfig          $moduleConfig,
+        State                 $appState,
         array                 $data = []
     ) {
         parent::__construct(
@@ -88,6 +104,11 @@ class Invoice extends BaseMagentoInvoice
         );
 
         $this->moduleConfig = $moduleConfig;
+        $this->appState = $appState;
+
+        $this->isPdfSizeReductionEnabled =
+            $this->moduleConfig->isPdfSizeReductionEnabled() &&
+            in_array($this->appState->getAreaCode(), $this->moduleConfig->getPdfReductionEnabledAreas());
     }
 
     /**
@@ -95,7 +116,7 @@ class Invoice extends BaseMagentoInvoice
      */
     protected function _setFontRegular($object, $size = 7): \Zend_Pdf_Resource_Font
     {
-        if (!$this->moduleConfig->isPdfSizeReductionEnabled()) {
+        if (!$this->isPdfSizeReductionEnabled) {
             return parent::_setFontRegular($object, $size);
         }
 
@@ -110,8 +131,8 @@ class Invoice extends BaseMagentoInvoice
      */
     protected function _setFontBold($object, $size = 7): \Zend_Pdf_Resource_Font
     {
-        if (!$this->moduleConfig->isPdfSizeReductionEnabled()) {
-            return parent::_setFontBold($object, $size);
+        if (!$this->isPdfSizeReductionEnabled) {
+            return parent::_setFontRegular($object, $size);
         }
 
         $font = \Zend_Pdf_Font::fontWithName(\Zend_Pdf_Font::FONT_HELVETICA_BOLD);
@@ -125,8 +146,8 @@ class Invoice extends BaseMagentoInvoice
      */
     protected function _setFontItalic($object, $size = 7): \Zend_Pdf_Resource_Font
     {
-        if (!$this->moduleConfig->isPdfSizeReductionEnabled()) {
-            return parent::_setFontItalic($object, $size);
+        if (!$this->isPdfSizeReductionEnabled) {
+            return parent::_setFontRegular($object, $size);
         }
 
         $font = \Zend_Pdf_Font::fontWithName(\Zend_Pdf_Font::FONT_HELVETICA_ITALIC);

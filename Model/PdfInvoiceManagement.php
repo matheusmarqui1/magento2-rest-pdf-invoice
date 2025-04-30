@@ -75,7 +75,7 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
     }
 
     /**
-     * Return an invoice PDF response based on given orderId in the endpoint.
+     * Return an invoice PDF response based on the given orderId in the endpoint.
      *
      * @inheritDoc
      * @throws NoSuchEntityException|\Zend_Pdf_Exception
@@ -122,7 +122,13 @@ class PdfInvoiceManagement implements PdfInvoiceManagementInterface
         }
 
         if ($this->isIncrementId($orderId)) {
-            return $this->loadOrderByIncrementId($orderId);
+            $orderByIncrementId = $this->loadOrderByIncrementId($orderId);
+
+            if ($orderByIncrementId) {
+                return $orderByIncrementId;
+            }
+
+            throw new NoSuchEntityException(__('No order found with increment ID "%1".', $orderId));
         }
 
         try {

@@ -21,14 +21,19 @@ use Magento\Store\Model\StoreManagerInterface;
 class Config
 {
     /**
-    * XML path for the enabled setting.
-    */
+     * XML path for the enabled setting.
+     */
     public const XML_PATH_ENABLED = 'ytec_rest_pdf_invoice/general/enable';
 
     /**
      * XML path for the PDF size reduction setting.
      */
     public const XML_PATH_PDF_SIZE_REDUCTION_ENABLED = 'ytec_rest_pdf_invoice/general/reduce_pdf_size_enabled';
+
+    /**
+     * XML path for the PDF size reduction areas.
+     */
+    public const XML_PATH_PDF_SIZE_REDUCTION_AREAS = 'ytec_rest_pdf_invoice/general/apply_pdf_size_reduction_on_areas';
 
     /**
      * @var ScopeConfigInterface
@@ -46,8 +51,10 @@ class Config
      * @param ScopeConfigInterface $scopeConfig
      * @param StoreManagerInterface $storeManager
      */
-    public function __construct(ScopeConfigInterface $scopeConfig, StoreManagerInterface $storeManager)
-    {
+    public function __construct(
+        ScopeConfigInterface $scopeConfig,
+        StoreManagerInterface $storeManager
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
     }
@@ -68,7 +75,7 @@ class Config
     }
 
     /**
-     * Checks if the Rest Pdf Invoice functionality is disabled.
+     * Checks if the Rest PDF Invoice functionality is disabled.
      *
      * @return bool
      * @throws NoSuchEntityException
@@ -96,5 +103,29 @@ class Config
             ScopeInterface::SCOPE_STORE,
             $scopeCode
         );
+    }
+
+    /**
+     * Retrieves the areas where PDF size reduction is enabled.
+     *
+     * @return array
+     */
+    public function getPdfReductionEnabledAreas(): array
+    {
+        try {
+            $rawAreaList = $this->scopeConfig->getValue(
+                static::XML_PATH_PDF_SIZE_REDUCTION_AREAS,
+                ScopeInterface::SCOPE_STORE,
+                $this->storeManager->getStore()->getId()
+            );
+        } catch (NoSuchEntityException $exception) {
+            return [];
+        }
+
+        if (empty($rawAreaList)) {
+            return [];
+        }
+
+        return explode(',', $rawAreaList);
     }
 }

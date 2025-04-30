@@ -32,6 +32,18 @@
                         ]]>
                     </comment>
                 </field>
+                <field id="apply_pdf_size_reduction_on_areas" translate="label" type="multiselect" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Apply PDF Size Reduction on Areas</label>
+                    <source_model>Ytec\RestPdfInvoice\Model\Config\Source\Area</source_model>
+                    <comment>
+                        <![CDATA[
+                            Select the areas where the PDF size reduction should be applied.
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="reduce_pdf_size_enabled">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
     </system>

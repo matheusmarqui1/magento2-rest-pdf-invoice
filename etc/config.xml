@@ -14,6 +14,7 @@
             <general>
                 <enable>1</enable>
                 <reduce_pdf_size_enabled>1</reduce_pdf_size_enabled>
+                <apply_pdf_size_reduction_on_areas>webapi_rest</apply_pdf_size_reduction_on_areas>
             </general>
         </ytec_rest_pdf_invoice>
     </default>
